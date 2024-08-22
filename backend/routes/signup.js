@@ -19,7 +19,7 @@ router.get('/', (req, res) => {
 
 
 router.post('/' ,async (req,res)=>{
-    const {name,email,password,confirmPassword} = req.body
+    const {name,email,password,confirmPassword,catagory} = req.body
 
     const existingUser = await newUser.findOne({ email });
     if (existingUser) {
@@ -40,7 +40,8 @@ router.post('/' ,async (req,res)=>{
         email:email,
         passwd:hashedPassword,
         authToken:token,
-        password:password
+        password:password,
+        catagory:catagory
     }); 
     await userData.save();
     res.json({authToken:token})

@@ -15,10 +15,6 @@ app.get('/', (req, res) => {
 });
 
 
-//router for test routing 
-const testRoute = require("./routes/test.js")
-app.use("/test",testRoute)
-
 
 //router for signup
 const signUp = require("./routes/signup.js") 
@@ -28,9 +24,17 @@ app.use("/signup",signUp)
 const login = require("./routes/login.js")
 app.use("/login",login)
 
-//Otp router 
-const otpRoute = require("./routes/sendOtp.js")
-app.use("/otp",otpRoute)
+
+const forgetPassword = require("./routes/forgetPassword.js")
+app.use("/forgetPassword",forgetPassword)
+
+
+const verifyOtp = require("./routes/verifyOtp.js")
+app.use("/verifyOtp",verifyOtp)
+
+
+const setNewPassowrd = require("./routes/setNewPassword.js")
+app.use("/setNewPassword",setNewPassowrd)
 // Start the server
 app.listen(PORT, () => {
     console.log(`Server is running on http://localhost:${PORT}`);

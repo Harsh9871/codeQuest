@@ -5,9 +5,10 @@ const userScema = new mongoose.Schema({
     email:String,
     passwd:String,
     authToken:String,
+    catagory:String || "student",
     password:String
 });
-
+ 
 const User = mongoose.model('users', userScema); // Corrected mongoose spelling
 
 module.exports = User;
