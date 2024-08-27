@@ -42,6 +42,10 @@ app.use("/setNewPassword",setNewPassowrd)
 const dashBoardView = require("./routes/public/profile.js")
 app.use("/in/:slug",dashBoardView)
 
+
+//sidebar details 
+const sideBar = require("./routes/public/sidebar.js")
+app.use("/sidebar",sideBar)
 // Start the server
 app.listen(PORT, () => {
     console.log(`Server is running on http://localhost:${PORT}`);

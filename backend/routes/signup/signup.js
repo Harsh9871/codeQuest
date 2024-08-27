@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-
+const sideBarData = require('../../Modules/sideBar.js');
 const dotenv = require('dotenv');
 dotenv.config();
 
@@ -47,6 +47,18 @@ router.post('/' ,async (req,res)=>{
         catagory:catagory
     }); 
     await userData.save();
+    let sideBarData = new sideBarData({
+        email:email,
+        profilePicture:null,
+        bio:null,
+        education:null,
+        skills:null,
+        location:null,
+        linkedIn:null,
+        github:null,
+        projects:null
+    })
+    await sideBarData.save();
     res.json({authToken:token})
 })
 
