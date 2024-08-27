@@ -17,23 +17,23 @@ app.get('/', (req, res) => {
 
 
 //router for signup
-const signUp = require("./routes/signup.js") 
+const signUp = require("./routes/signup/signup.js") 
 app.use("/signup",signUp)
 
 
-const login = require("./routes/login.js")
+const login = require("./routes/signup/login.js")
 app.use("/login",login)
 
 
-const forgetPassword = require("./routes/forgetPassword.js")
+const forgetPassword = require("./routes/signup/forgetPassword.js")
 app.use("/forgetPassword",forgetPassword)
 
 
-const verifyOtp = require("./routes/verifyOtp.js")
+const verifyOtp = require("./routes/signup/verifyOtp.js")
 app.use("/verifyOtp",verifyOtp)
 
 
-const setNewPassowrd = require("./routes/setNewPassword.js")
+const setNewPassowrd = require("./routes/signup/setNewPassword.js")
 app.use("/setNewPassword",setNewPassowrd)
 // Start the server
 app.listen(PORT, () => {

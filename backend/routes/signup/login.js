@@ -12,7 +12,7 @@ mongoose.connect(process.env.MONGO_URI || 'mongodb://localhost:27017/codeQuest',
     .catch(err => console.error('Database connection error:', err));
 
 // Import User model
-const User = require('../Modules/users');
+const User = require('../../Modules/users');
 
 router.get('/', (_req, res) => {
     res.status(400).json({ error: 'authentication error' });

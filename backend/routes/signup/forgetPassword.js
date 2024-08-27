@@ -6,8 +6,8 @@ const crypto = require('crypto');
 
 dotenv.config();
 
-const newUser = require('../Modules/users.js');
-const otpModule = require('../Modules/otp.js');
+const newUser = require('../../Modules/users.js');
+const otpModule = require('../../Modules/otp.js');
 
 // Function to generate a random OTP
 const generateOtp = (length = 8) => {

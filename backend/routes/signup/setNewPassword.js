@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const bcrypt = require('bcrypt'); // For hashing passwords
-const UserModel = require('../Modules/users.js'); // Adjust the path as needed
+const UserModel = require('../../Modules/users.js'); // Adjust the path as needed
 
 // Handle invalid GET requests
 router.get('/', (req, res) => {

@@ -10,7 +10,7 @@ const bcrypt = require("bcrypt")
 const mongoose = require('mongoose');
 mongoose.connect("mongodb://localhost:27017/codeQuest").then(()=> console.log("Connected to database")).catch((err)=> console.log(err));
 
-const newUser = require('../Modules/users.js');
+const newUser = require('../../Modules/users.js');
 
 router.get('/', (req, res) => {
     res.json({ message: 'Wrong Route method' });

@@ -2,8 +2,8 @@ const express = require('express');
 const router = express.Router();
 
 // Import your Mongoose model correctly
-const otpModule = require('../Modules/otp.js'); // Adjust the path as needed
-const users = require('../Modules/users.js')
+const otpModule = require('../../Modules/otp.js'); // Adjust the path as needed
+const users = require('../../Modules/users.js')
 // Handle invalid GET requests
 router.get('/', (req, res) => {
     res.status(404).json({ error: "Bad request" });
