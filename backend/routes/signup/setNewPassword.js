@@ -5,6 +5,7 @@ const UserModel = require('../../Modules/users.js'); // Adjust the path as neede
 
 // Handle invalid GET requests
 router.get('/', (req, res) => {
+    console.log("Body of /setNewPassword"+req.body);    
     res.status(404).json({ error: "Invalid route" });
 });
 

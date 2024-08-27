@@ -6,6 +6,7 @@ const otpModule = require('../../Modules/otp.js'); // Adjust the path as needed
 const users = require('../../Modules/users.js')
 // Handle invalid GET requests
 router.get('/', (req, res) => {
+    console.log("Body of /verifyOtp"+req.body);
     res.status(404).json({ error: "Bad request" });
 });
 

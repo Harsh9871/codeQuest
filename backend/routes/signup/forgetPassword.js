@@ -22,7 +22,8 @@ const generateOtp = (length = 8) => {
 };
 
 // Handle invalid routes
-router.get('/', (_req, res) => {
+router.get('/', (req, res) => {
+    console.log("Body of /forgetPassword"+req.body);
     res.status(404).json({ error: "Invalid route" });
 });
 

@@ -11,6 +11,7 @@ app.use(express.json());
 
 // Root route
 app.get('/', (req, res) => {
+    console.log("Body of /"+req.body);
     res.send('Hello World!');
 });
 
@@ -35,6 +36,12 @@ app.use("/verifyOtp",verifyOtp)
 
 const setNewPassowrd = require("./routes/signup/setNewPassword.js")
 app.use("/setNewPassword",setNewPassowrd)
+
+//public preview of profile / dashboard
+
+const dashBoardView = require("./routes/public/profile.js")
+app.use("/in/:slug",dashBoardView)
+
 // Start the server
 app.listen(PORT, () => {
     console.log(`Server is running on http://localhost:${PORT}`);

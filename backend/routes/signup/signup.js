@@ -20,12 +20,15 @@ router.get('/', (req, res) => {
 
 router.post('/' ,async (req,res)=>{
     const {name,email,password,confirmPassword,catagory} = req.body
-
+    let newName = name.replace(" ","_")
     const existingUser = await newUser.findOne({ email });
     if (existingUser) {
       return res.status(400).json({ error: "authentication error" });
     }
-
+    const UserName = await newUser.findOne({ newName });
+    if (UserName) {
+      return res.status(400).json({ error: "authentication error" });
+    }
 
     if(password !== confirmPassword){
         res.status(400).json({error:"authentication error"})

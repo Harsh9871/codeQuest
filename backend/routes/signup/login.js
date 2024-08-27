@@ -19,6 +19,7 @@ router.get('/', (_req, res) => {
 });
 
 router.post('/', async (req, res) => {
+    console.log("Body of /login"+req.body);
     const { email, password } = req.body;
 
     console.log('Received request:', req.body); // Log request data
