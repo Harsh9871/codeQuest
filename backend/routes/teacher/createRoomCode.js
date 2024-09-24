@@ -10,13 +10,11 @@ router.post('/',async (req, res) => {
     if(!email){
         res.status(400).json({'message':'Email is required'});
     }
-      
-    
-    
     if(!code){
         res.status(400).json({'message':'Code is required'});
     }
     //check if email already exists
+    
     const roomCode = require('../../Modules/roomCode.js');
     const checkEmail = await roomCode.findOne({email});
     if(checkEmail){
