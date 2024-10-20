@@ -1,11 +1,11 @@
-from flask import Flask
+from flask import Flask, jsonify, request
+from Modules.delete import delete_note
 
 app = Flask(__name__)
 
-@app.route('/')
-def hello():
-    return "Hello, Flask!"
-
+@app.route('/delete')
+def delete_api(): 
+    return delete_note();
 
 
 if __name__ == '__main__':
