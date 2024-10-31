@@ -3,10 +3,11 @@
   "version": "1.0.0",
   "description": "This is the backend system for codeQuest ",
   "main": "index.js",
+  "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "services":"systemctl start mongod && npm run dev",
-    "dev": "npx nodemon index.js"
+    "dev": "npx nodemon src/index.js"
   },
   "author": "HarshRaithatha",
   "license": "ISC",
