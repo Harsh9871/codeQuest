@@ -7,37 +7,44 @@ const getUserByToken = (token) =>{
     return getUserById(data.userName);
 }
 
-const createUser = async(data) =>{
-    const salt = bcrypt.genSaltSync(10);
-    const hash = bcrypt.hashSync(data.password, salt);
-    const myData = {
-        userName:data.userName,
-        password:hash,
-        email:data.email,
-        role:data.role ? data.role : 'user'
-    }
-    const user = new User(myData);
+const createUser = async (data) => {
+    const salt = await bcrypt.genSalt(10); // Ensure this is awaited
+    const hash = await bcrypt.hash(data.password, salt);
+    console.log(`userName ${data.userName} email ${data.email} hash ${hash} role ${data.role}`);
+    
     try {
-        await user.save();
-        return {
-            status:200,
-            message:'User Created Successfully',
-        }
+        await new User({
+            username: data.userName,
+            email: data.email,
+            password: hash,
+            role: data.role ? data.role : 'user'
+        }).save().then(
+            console.log('User created successfully')
+        )
+        return ({
+            status: 200,
+            message: 'User created successfully'
+        });
+        
     } catch (error) {
-        return {
-            error:error.message,
-            status:500,
-            message:'Internal Server Error'
-        }        
+        console.error('Error creating user:', error.message);
+        return ({
+            error: error.message,
+            status: 500,
+            message: 'Internal Server Error'
+        });
     }
-}
+};
 
-const getUserById = (userName) =>{
-    return User.findOne({userName:userName});
+const getUserById = async (userName) =>{
+    return await User.findOne({userName:userName});
 }
-
+const getUserByEmail = async (email) =>{
+    return await User.findOne({email:email});
+}
 export {
     createUser,
     getUserById,
-    getUserByToken
+    getUserByToken,
+    getUserByEmail
 }

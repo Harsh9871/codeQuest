@@ -16,4 +16,4 @@ userRouter.get('/profile', async(req, res) => {
 
 userRouter.post('/register',register)
 
-export default userRouter;
+export {userRouter};
