@@ -1,29 +1,28 @@
 import User from '../models/userModel.js';
 import bcrypt from 'bcrypt';
-import  { decodeToken } from '../services/jwtServices.js';
 
-const getUserByToken = (token) =>{
-    const data = decodeToken(token);
-    return getUserById(data.userName);
-}
+const getUserBySignupToken = async (token) => {
+    return await User.findOne({ signUpVerifyToken: token });
+};
+
 
 const createUser = async (data) => {
     const salt = await bcrypt.genSalt(10); // Ensure this is awaited
     const hash = await bcrypt.hash(data.password, salt);
-    console.log(`userName ${data.userName} email ${data.email} hash ${hash} role ${data.role}`);
+    
     
     try {
-        await new User({
+        const user = new User({
             username: data.userName,
             email: data.email,
             password: hash,
             role: data.role ? data.role : 'user'
-        }).save().then(
-            console.log('User created successfully')
-        )
+        })
+        await user.save();
         return ({
             status: 200,
-            message: 'User created successfully'
+            message: 'User created successfully',
+            user: user
         });
         
     } catch (error) {
@@ -45,6 +44,6 @@ const getUserByEmail = async (email) =>{
 export {
     createUser,
     getUserById,
-    getUserByToken,
+    getUserBySignupToken,
     getUserByEmail
 }

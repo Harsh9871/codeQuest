@@ -1,6 +1,8 @@
-import transporter from '../utils/nodeMailerUtil.js';
-import {emailUser} from '../config/dotenvConfig.js'
-const sendMail = async (to, subject, text, html) => {
+import {transporter} from '../config/nodeMailerConfig.js';
+import {emailUser} from '../config/dotenvConfig.js';
+const sendMail = async ({to, subject, text, html}) => {
+    
+    
     try {
         const info = await transporter.sendMail({
             from: emailUser,
@@ -9,8 +11,6 @@ const sendMail = async (to, subject, text, html) => {
             text,
             html
         });
-
-        console.log(`Email sent: ${info.messageId}`);
         return { status: 200, message: 'Email sent successfully', info };
     } catch (error) {
         console.error(`Error sending email: ${error.message}`);
