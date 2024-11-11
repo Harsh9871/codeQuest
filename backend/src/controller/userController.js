@@ -1,5 +1,5 @@
 import {createUser,getUserById,getUserByEmail ,getUserBySignupToken} from '../services/userServices.js';
-import {createToken} from '../services/jwtServices.js';
+import { createToken } from '../services/jwtServices.js';
 import {sendMail} from '../services/emailServices.js'
 import { port } from '../config/dotenvConfig.js';
 const register = async (req, res) => {
@@ -70,17 +70,19 @@ const login = async (req, res) => {
     }
     const isPasswordValid = await bcrypt.compareSync(password, user.password);
     if (!isPasswordValid) {
-        return res.status(400).json({ message: 'Invalid password' });
+        return res.status(400).json({ message: 'Invalid user name or password' });
     }
-    const token = createToken({username:user.userName,email:user.email,role:user.role});
+    const token = createToken({username:user.username,email:user.email,role:user.role});
     return res.status(200).json({ message: 'Login successful', token });
 };
 
 const verifyEmail = async (req, res) => {
-    const token = req.params.token;
-
+    const {token} = req.params;
+    console.log(token);
+    
     // Find the user by sign-up verification token
     const user = await getUserBySignupToken(token);
+    console.log(user);
     if (!user) {
         return res.status(400).json({ message: 'User does not exist or invalid token' });
     }
@@ -94,7 +96,7 @@ const verifyEmail = async (req, res) => {
     user.signUpVerifyToken = null;
     user.signUpVerifyTokenExpiry = null;
     await user.save();
-    responseToken = createToken({username:user.userName,email:user.email,role:user.role});
+    let responseToken = createToken({username:user.username,email:user.email,role:user.role},'7d');;
     return res.status(200).json({ message: 'Email verified successfully' , token:responseToken  });
 };
 
