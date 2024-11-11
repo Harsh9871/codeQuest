@@ -1,5 +1,5 @@
-import {createUser,getUserById,getUserByEmail ,getUserBySignupToken} from '../services/userServices.js';
-import {createToken} from '../services/jwtServices.js';
+import {createUser,getUserById,getUserByEmail ,getUserBySignupToken , passwordCompare} from '../services/userServices.js';
+import { createToken ,getDataFromToken} from '../services/jwtServices.js';
 import {sendMail} from '../services/emailServices.js'
 import { port } from '../config/dotenvConfig.js';
 const register = async (req, res) => {
@@ -68,23 +68,25 @@ const login = async (req, res) => {
     if (!user) {
         return res.status(400).json({ message: 'User does not exist' });
     }
-    const isPasswordValid = await bcrypt.compareSync(password, user.password);
+    const isPasswordValid = passwordCompare(password, user.password);
     if (!isPasswordValid) {
-        return res.status(400).json({ message: 'Invalid password' });
+        return res.status(400).json({ message: 'Invalid user name or password' });
     }
-    const token = createToken({username:user.userName,email:user.email,role:user.role});
+    const token = createToken({username:user.username,email:user.email,role:user.role},'7d');
     return res.status(200).json({ message: 'Login successful', token });
 };
 
 const verifyEmail = async (req, res) => {
-    const token = req.params.token;
-
+    const {token} = req.params;
+    console.log(token);
+    
     // Find the user by sign-up verification token
     const user = await getUserBySignupToken(token);
+    console.log(user);
     if (!user) {
         return res.status(400).json({ message: 'User does not exist or invalid token' });
     }
-
+    
     // Check if token matches and if it hasn't expired
     if (user.signUpVerifyToken !== token || user.signUpVerifyTokenExpiry < Date.now()) {
         return res.status(400).json({ message: 'Token expired or invalid' });
@@ -94,8 +96,45 @@ const verifyEmail = async (req, res) => {
     user.signUpVerifyToken = null;
     user.signUpVerifyTokenExpiry = null;
     await user.save();
-    responseToken = createToken({username:user.userName,email:user.email,role:user.role});
+    let responseToken = createToken({username:user.username,email:user.email,role:user.role},'7d');;
     return res.status(200).json({ message: 'Email verified successfully' , token:responseToken  });
 };
 
-export { register, login , verifyEmail };
+const userProfile = async (req,res)=>{
+    try {
+        
+        const token = req.headers.authorization;
+        
+        if (!token) {
+            return res.status(401).json({ message: 'Unauthorized: No token provided' });
+        }
+        const data = getDataFromToken(token);
+        if (!data) {
+            return res.status(401).json({ message: 'Unauthorized: Invalid token' });
+        }
+        const user = await getUserById(data.username);
+        if (!user) {
+            return res.status(401).json({ message: 'Unauthorized: User not found' });
+        }else{
+            return res.status(200).json({name:user.username,email:user.email}); // Send user profile as response
+        }
+    } catch (error) {
+        console.error('Error fetching user profile:', error);
+        return res.status(500).json({ message: 'Internal Server Error' });
+    }
+}
+
+const userByName = async (req,res)=>{
+    try {
+        const user = await getUserById(req.params.userName);
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+        return res.status(200).json({username:user.username,email:user.email}); 
+    } catch (error) {
+        console.error('Error fetching user:', error);
+        return res.status(500).json({ message: 'Internal Server Error' });
+    }
+}
+
+export { register, login , verifyEmail , userProfile ,userByName};

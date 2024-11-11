@@ -1,11 +1,12 @@
 import User from '../models/userModel.js';
 import bcrypt from 'bcrypt';
-
 const getUserBySignupToken = async (token) => {
     return await User.findOne({ signUpVerifyToken: token });
 };
 
-
+const passwordCompare = async (password, hash) => {
+    return await bcrypt.compare(password, hash);
+};
 const createUser = async (data) => {
     const salt = await bcrypt.genSalt(10); // Ensure this is awaited
     const hash = await bcrypt.hash(data.password, salt);
@@ -36,14 +37,17 @@ const createUser = async (data) => {
 };
 
 const getUserById = async (userName) =>{
-    return await User.findOne({userName:userName});
+    return await User.findOne({username:userName});
 }
 const getUserByEmail = async (email) =>{
     return await User.findOne({email:email});
 }
+
+
 export {
     createUser,
     getUserById,
     getUserBySignupToken,
-    getUserByEmail
+    getUserByEmail,
+    passwordCompare,
 }
