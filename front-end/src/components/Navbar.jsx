@@ -43,7 +43,7 @@ const Navbar = ({ message }) => {
   const { loggedIn } = message || {};
 
   return (
-    <nav className="border-b shadow-lg bg-[var(--background)] text-[var(--foreground)]">
+    <nav className="border-b shadow-lg bg-[hsl(var(--background))] text-[var(--foreground)]">
       <div className="container mx-auto px-4 py-4 flex items-center justify-between">
         {/* Logo */}
         <div className="text-xl font-bold cursor-pointer" onClick={goToHome}>Code Quest</div>
@@ -55,11 +55,17 @@ const Navbar = ({ message }) => {
             onClick={goToProfile}
           >
             <img 
-              src="https://via.placeholder.com/40" 
+              src="http://localhost:5173/logo.jpg" 
               alt="Profile" 
               className="w-10 h-10 rounded-full border"
             />
             <span className="text-lg font-medium">Profile</span>
+            <Button 
+            onClick={toggleTheme} 
+            className="md:ml-8 p-4 transition-colors duration-300 bg-[var(--secondary)] text-[var(--secondary-foreground)]"
+          >
+            {theme === 'light' ? 'Dark Mode' : 'Light Mode'}
+          </Button>
           </div>
         ) : (
           // Login/Signup Button
@@ -68,13 +74,13 @@ const Navbar = ({ message }) => {
             {(currentPath == "/login" || currentPath == "/signup") ? (<></>) : (<>
               <Button 
               onClick={goToLogin} 
-              className="p-4 transition-colors duration-300 bg-[var(--primary)] text-[var(--primary-foreground)] shadow-md hover:shadow-lg"
+              className="p-4 transition-colors duration-300  shadow-md hover:shadow-lg"
             >
               Login
             </Button>
             <Button 
               onClick={() => navigate('/signup')} 
-              className="p-4 transition-colors duration-300 bg-[var(--primary)] text-[var(--primary-foreground)] shadow-md hover:shadow-lg"
+              className="p-4 transition-colors duration-300 shadow-md hover:shadow-lg"
             >
               Signup
             </Button>

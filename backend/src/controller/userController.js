@@ -1,11 +1,11 @@
-import {createUser,getUserById,getUserByEmail ,getUserBySignupToken , passwordCompare} from '../services/userServices.js';
-import { createToken ,getDataFromToken} from '../services/jwtServices.js';
-import {sendMail} from '../services/emailServices.js'
+import { createUser, getUserById, getUserByEmail, getUserBySignupToken, passwordCompare, getUserDetailsById ,createUserDetails} from '../services/userServices.js';
+import { createToken, getDataFromToken } from '../services/jwtServices.js';
+import { sendMail } from '../services/emailServices.js'
 import { port } from '../config/dotenvConfig.js';
 const register = async (req, res) => {
     const { userName, email, password, confirmPassword, role } = req.body;
     const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
-    
+
     if (!userName || !email || !password || !confirmPassword) {
         return res.status(400).json({ message: 'All fields are required' });
     }
@@ -37,7 +37,7 @@ const register = async (req, res) => {
     if (user) {
         return res.status(400).json({ message: 'User already exists' });
     }
-    const result = await createUser({ userName,email, password,  role });
+    const result = await createUser({ userName, email, password, role });
     if (result.status !== 200) {
         console.error('User creation failed:', result.error); // Log any errors
         return res.status(result.status).json({ message: result.error });
@@ -52,7 +52,8 @@ const register = async (req, res) => {
             to: email, // Should be defined correctly
             subject: 'Verify your email',
             html: `<h1>Verify your email</h1>
-            <p>Click <a href="http://localhost:${port}/user/verifyEmail/${signUpToken}">here</a> to verify your email</p>`
+            <p>Click <a href="http://localhost:${port}/user/verifyEmail/${signUpToken}">here</a> to verify your email</p>
+            <p>Click <a href="http://localhost:${5173}/user/verifyEmail/${signUpToken}">here</a> to verify your email by front end</p>`
         });
         return res.status(200).json({ message: 'Email sent successfully' });
     } catch (error) {
@@ -60,7 +61,6 @@ const register = async (req, res) => {
         return res.status(500).json({ message: 'Error sending verification email' });
     }
 };
-
 
 const login = async (req, res) => {
     const { userName, password } = req.body;
@@ -72,21 +72,21 @@ const login = async (req, res) => {
     if (!isPasswordValid) {
         return res.status(400).json({ message: 'Invalid user name or password' });
     }
-    const token = createToken({username:user.username,email:user.email,role:user.role},'7d');
+    const token = createToken({ username: user.username, email: user.email, role: user.role }, '7d');
     return res.status(200).json({ message: 'Login successful', token });
 };
 
 const verifyEmail = async (req, res) => {
-    const {token} = req.params;
+    const { token } = req.params;
     console.log(token);
-    
+
     // Find the user by sign-up verification token
     const user = await getUserBySignupToken(token);
     console.log(user);
     if (!user) {
         return res.status(400).json({ message: 'User does not exist or invalid token' });
     }
-    
+
     // Check if token matches and if it hasn't expired
     if (user.signUpVerifyToken !== token || user.signUpVerifyTokenExpiry < Date.now()) {
         return res.status(400).json({ message: 'Token expired or invalid' });
@@ -96,15 +96,15 @@ const verifyEmail = async (req, res) => {
     user.signUpVerifyToken = null;
     user.signUpVerifyTokenExpiry = null;
     await user.save();
-    let responseToken = createToken({username:user.username,email:user.email,role:user.role},'7d');;
-    return res.status(200).json({ message: 'Email verified successfully' , token:responseToken  });
+    let responseToken = createToken({ username: user.username, email: user.email, role: user.role }, '7d');;
+    return res.status(200).json({ message: 'Email verified successfully', token: responseToken });
 };
 
-const userProfile = async (req,res)=>{
+const userProfile = async (req, res) => {
     try {
-        
+
         const token = req.headers.authorization;
-        
+
         if (!token) {
             return res.status(401).json({ message: 'Unauthorized: No token provided' });
         }
@@ -115,26 +115,107 @@ const userProfile = async (req,res)=>{
         const user = await getUserById(data.username);
         if (!user) {
             return res.status(401).json({ message: 'Unauthorized: User not found' });
-        }else{
-            return res.status(200).json({name:user.username,email:user.email}); // Send user profile as response
         }
+        return res.status(200).json({ name: user.username, email: user.email });
     } catch (error) {
         console.error('Error fetching user profile:', error);
         return res.status(500).json({ message: 'Internal Server Error' });
     }
 }
 
-const userByName = async (req,res)=>{
+const userByName = async (req, res) => {
     try {
         const user = await getUserById(req.params.userName);
         if (!user) {
             return res.status(404).json({ message: 'User not found' });
         }
-        return res.status(200).json({username:user.username,email:user.email}); 
+        return res.status(200).json({ username: user.username, email: user.email });
     } catch (error) {
         console.error('Error fetching user:', error);
         return res.status(500).json({ message: 'Internal Server Error' });
     }
 }
 
-export { register, login , verifyEmail , userProfile ,userByName};
+const getUserDetails = async (req, res) => {
+    try {
+        // Ensure user is authenticated (user data should be available in req.user due to the authMiddleware)
+        const user = req.user;
+        if (!user) {
+            return res.status(401).json({ message: 'Unauthorized: User not found' });
+        }
+
+        // Fetch the user's detailed profile data
+        const userDetails = await getUserDetailsById(user._id);
+        if (!userDetails) {
+            return res.status(404).json({ message: 'User details not found' });
+        }
+
+        return res.status(200).json({
+            profileUrl: userDetails.profileUrl,
+            points: userDetails.points,
+            description: userDetails.description,
+            currentlyEmployedAt: userDetails.currentlyEmployedAt,
+            location: userDetails.location,
+            education: userDetails.education,
+            publicProfileUrl: userDetails.publicProfileUrl,
+            githubUrl: userDetails.githubUrl,
+            linkedinUrl: userDetails.linkedinUrl,
+            technologies: userDetails.technologies,
+            skills: userDetails.skills,
+            projects: userDetails.projects,
+            achievements: userDetails.achievements,
+        });
+    } catch (error) {
+        console.error('Error fetching user details:', error);
+        return res.status(500).json({ message: 'Internal Server Error' });
+    }
+};
+
+const userDetails = async (req, res) => {
+    try {
+        const user = req.user;
+        if (!user) {
+            return res.status(401).json({ message: 'Unauthorized: User not found' });
+        }
+
+        const {
+            profileUrl,
+            description,
+            currentlyEmployedAt,
+            location,
+            education,
+            publicProfileUrl,
+            githubUrl,
+            linkedinUrl,
+            technologies,
+            skills,
+            projects,
+        } = req.body;
+
+        const createDetails =await createUserDetails({
+            user: user._id,
+            profileUrl,
+            description,
+            currentlyEmployedAt,
+            location,
+            education,
+            publicProfileUrl,
+            githubUrl,
+            linkedinUrl,
+            technologies,
+            skills,
+            projects,
+        });
+        if (!createDetails) {
+            return res.status(400).json({ message: 'Failed to create user details' });
+        }
+        
+        return res.status(200).json({ message: 'User details created successfully' });
+    } catch (error) {
+        console.error('Error updating user details:', error);
+        return res.status(500).json({ message: 'Internal Server Error' });
+    }
+};
+
+
+export { register, login, verifyEmail, userProfile, userByName, getUserDetails , userDetails };
