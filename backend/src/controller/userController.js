@@ -68,7 +68,7 @@ const login = async (req, res) => {
     if (!user) {
         return res.status(400).json({ message: 'User does not exist' });
     }
-    const isPasswordValid = passwordCompare(password, user.password);
+    const isPasswordValid = await passwordCompare(password, user.password);
     if (!isPasswordValid) {
         return res.status(400).json({ message: 'Invalid user name or password' });
     }
