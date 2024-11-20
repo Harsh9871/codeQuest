@@ -1,4 +1,5 @@
 import User from '../models/userModel.js';
+import UserDetail from '../models/userDetailsModel.js';
 import bcrypt from 'bcrypt';
 const getUserBySignupToken = async (token) => {
     return await User.findOne({ signUpVerifyToken: token });
@@ -43,11 +44,46 @@ const getUserByEmail = async (email) =>{
     return await User.findOne({email:email});
 }
 
-
+const getUserDetailsById = async (id) =>{
+    return await UserDetail.findOne({user:id});
+}
+const createUserDetails = async (data) =>{
+    try{
+        const userDetail = new UserDetail({
+            user:data.user,
+            profileUrl:data.profileUrl,
+            description:data.description,
+            currentlyEmployedAt:data.currentlyEmployedAt,
+            location:data.location,
+            education:data.education,
+            publicProfileUrl:data.publicProfileUrl,
+            githubUrl:data.githubUrl,
+            linkedinUrl:data.linkedinUrl,
+            technologies:data.technologies,
+            skills:data.skills,
+            projects:data.projects
+        })
+    await userDetail.save();
+    return ({
+        status: 200,
+        message: 'User details created successfully',
+        userDetail: userDetail
+    });
+    }catch(error){
+        console.error('Error creating user details:', error.message);
+        return ({
+            error: error.message,
+            status: 500,
+            message: 'Internal Server Error'
+        });
+    }
+}
 export {
     createUser,
     getUserById,
     getUserBySignupToken,
     getUserByEmail,
     passwordCompare,
+    getUserDetailsById,
+    createUserDetails
 }
