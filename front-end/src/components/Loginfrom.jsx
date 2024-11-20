@@ -10,6 +10,7 @@ import {
 } from "./ui/card";
 import { Input } from "./ui/input";
 import { Label } from "./ui/label";
+import { Link } from "react-router-dom";
 
 const Loginfrom = ({ username, setUsername, password, setPassword, loading, error, onLogin }) => {
 
@@ -52,6 +53,11 @@ const Loginfrom = ({ username, setUsername, password, setPassword, loading, erro
                     <Button type="submit" onClick={onLogin} disabled={loading}>
                         {loading ? 'Logging in...' : 'Login'}
                     </Button>
+                    <Link to="/signup">
+                        <Button variant="ghost" className="text-blue-500 hover:text-blue-700">
+                            Dont Have an account? Sign Up
+                        </Button>
+                    </Link>
                 </CardFooter>
             </Card>
         </div>

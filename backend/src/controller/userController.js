@@ -4,13 +4,13 @@ import { sendMail } from '../services/emailServices.js'
 import { port } from '../config/dotenvConfig.js';
 const register = async (req, res) => {
     const { userName, email, password, confirmPassword, role } = req.body;
-    const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
-
+    
     if (!userName || !email || !password || !confirmPassword) {
         return res.status(400).json({ message: 'All fields are required' });
     }
-
+    
     //match email to regx 
+    const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
     if (!emailRegex.test(email)) {
         return res.status(400).json({ message: 'Invalid email format' });
     }
@@ -21,10 +21,10 @@ const register = async (req, res) => {
     if (password !== confirmPassword) {
         return res.status(400).json({ message: 'Password and confirm password do not match' });
     }
-    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&_])[A-Za-z\d@$!%*?&_]{8,}$/;
+    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&_#])[A-Za-z\d@$!%*?&_#]{8,}$/;
     if (!passwordRegex.test(password)) {
         return res.status(400).json({
-            message: 'Password must contain at least 8 characters, including at least one uppercase letter, one lowercase letter, one number, and one special character.'
+            message: 'Password must contain at least 8 characters, including at least one uppercase letter, one lowercase letter, one number, and one special character.',
         });
     }
     const userNameRegex = /^[a-zA-Z0-9_]+$/;
@@ -53,7 +53,7 @@ const register = async (req, res) => {
             subject: 'Verify your email',
             html: `<h1>Verify your email</h1>
             <p>Click <a href="http://localhost:${port}/user/verifyEmail/${signUpToken}">here</a> to verify your email</p>
-            <p>Click <a href="http://localhost:${5173}/user/verifyEmail/${signUpToken}">here</a> to verify your email by front end</p>`
+            <p>Click <a href="http://localhost:${5173}/verifyEmail/${signUpToken}">here</a> to verify your email by front end</p>`
         });
         return res.status(200).json({ message: 'Email sent successfully' });
     } catch (error) {
@@ -97,7 +97,7 @@ const verifyEmail = async (req, res) => {
     user.signUpVerifyTokenExpiry = null;
     await user.save();
     let responseToken = createToken({ username: user.username, email: user.email, role: user.role }, '7d');;
-    return res.status(200).json({ message: 'Email verified successfully', token: responseToken });
+    return res.status(200).json({ message: 'Email verified successfully', token: responseToken , role: user.role });
 };
 
 const userProfile = async (req, res) => {

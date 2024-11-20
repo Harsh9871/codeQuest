@@ -1,8 +1,16 @@
 import React from "react";
 import Navbar from "../components/Navbar";
-
+import { useNavigate } from 'react-router-dom';
+import { getCookiesAsJson } from '../utils/cookieHelper';
 const Profile = () => {
-  
+  const navigate = useNavigate();
+  const loginVerify = () => {
+    const cookies = getCookiesAsJson();
+    if (cookies.token) {
+      return true;
+    } else {
+      navigate('/login');
+    }}
   return (
     <>
       <Navbar />
@@ -16,7 +24,7 @@ const Profile = () => {
         </aside>
 
         {/* Main Section */}
-        <main className="w-4/5 p-4">
+        <main className="w-3/5 p-4">
           {/* Part 1: Two Boxes */}
           <div className="flex gap-4 mb-4">
             <div className="flex-1 bg-[hsl(var(--secondary))] text-[hsl(var(--secondary-foreground))] p-4 rounded-lg shadow">
