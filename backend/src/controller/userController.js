@@ -2,6 +2,9 @@ import { createUser, getUserById, getUserByEmail, getUserBySignupToken, password
 import { createToken, getDataFromToken } from '../services/jwtServices.js';
 import { sendMail } from '../services/emailServices.js'
 import { port } from '../config/dotenvConfig.js';
+import multer from 'multer';
+import path from 'path';
+import { fileURLToPath } from 'url';
 const register = async (req, res) => {
     const { userName, email, password, confirmPassword, role } = req.body;
     
@@ -218,4 +221,52 @@ const userDetails = async (req, res) => {
 };
 
 
-export { register, login, verifyEmail, userProfile, userByName, getUserDetails , userDetails };
+
+// Directory setup for ES modules
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+// Configure Multer storage
+const storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        cb(null, path.join(__dirname, 'assets/images')); // Store images in the assets/images folder
+    },
+    filename: (req, file, cb) => {
+        const username = req.user?.username || 'default_user'; // Use req.user.username or fallback
+        const ext = path.extname(file.originalname);
+        cb(null, `${username}${ext}`); // Save file as {username}.{extension}
+    }
+});
+
+// File filter to accept only image files
+const fileFilter = (req, file, cb) => {
+    if (file.mimetype.startsWith('image/')) {
+        cb(null, true);
+    } else {
+        cb(new Error('Only image files are allowed!'), false);
+    }
+};
+
+// Initialize multer
+const upload = multer({ 
+    storage: storage,
+    fileFilter: fileFilter
+});
+
+// Controller function
+const uploadImage = (req, res) => {
+    console.log('Received image upload request');
+    
+    upload.single('image')(req, res, (err) => {
+        if (err) {
+            return res.status(400).json({ error: err.message });
+        }
+        const imageUrl = `http://localhost:8080/assets/images/${req.file.filename}`;
+        res.status(200).json({ 
+            message: 'Image uploaded successfully', 
+            imageUrl: imageUrl 
+        });
+    });
+};
+
+export { register, login, verifyEmail, userProfile, userByName, getUserDetails , userDetails ,uploadImage};

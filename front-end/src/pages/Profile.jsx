@@ -2,6 +2,7 @@ import React from "react";
 import Navbar from "../components/Navbar";
 import { useNavigate } from 'react-router-dom';
 import { getCookiesAsJson } from '../utils/cookieHelper';
+import { NavLink } from "react-router-dom";
 const Profile = () => {
   const navigate = useNavigate();
   const loginVerify = () => {
@@ -50,6 +51,8 @@ const Profile = () => {
             <h3 className="font-semibold">Part 3</h3>
             <p className="text-sm text-[hsl(var(--muted-foreground))]">
               Nothing special here, just a placeholder.
+              {/* add navlink to userDetails */}
+              <NavLink to="/userDetails">User Details</NavLink> 
             </p>
           </div>
         </main>

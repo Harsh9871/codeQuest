@@ -1,4 +1,3 @@
-// src/App.jsx
 import React from 'react';
 import Home from './pages/Home';
 import Login from './pages/Login';
@@ -10,6 +9,7 @@ import UserDetails from './pages/UserDetails';
 import TeacherDetails from './pages/TeacherDetails';
 import { Routes, Route } from 'react-router-dom';
 import './App.css';
+
 function App() {
   return (
     <>
@@ -20,9 +20,8 @@ function App() {
         <Route path="/profile" element={<Profile />} />
         <Route path="/checkemail" element={<Checkemail />} />
         <Route path="/verifyEmail/:token" element={<CreateAccoutDetails />} />
-        <Route path="/userDetails" element={UserDetails}/>
-        <Route path="/TeacherDetails" element={TeacherDetails}/>
-
+        <Route path="/userDetails" element={<UserDetails />} />
+        <Route path="/teacherDetails" element={<TeacherDetails />} />
       </Routes>
     </>
   );
