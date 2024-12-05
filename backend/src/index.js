@@ -1,5 +1,6 @@
 import express from "express";
 import { port } from './config/dotenvConfig.js';
+import path from 'path';
 
 import connectDB from './db/dbConfig.js';
 connectDB();
@@ -14,6 +15,12 @@ app.get('/', (req, res) => {
 
 import { userRouter } from './routes/userRoutes.js';
 app.use('/user', userRouter);
+
+const __dirname = path.resolve();
+const imagesPath = path.join(__dirname, './src/asset/images');
+
+// Serve files in './asset/images' under '/asset/images' route
+app.use('/asset/images', express.static(imagesPath));
 
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`);

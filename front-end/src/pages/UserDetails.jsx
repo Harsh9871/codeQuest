@@ -28,32 +28,38 @@ const UserDetails = () => {
     }
   }, [authToken, navigate]);
 
-  const handleProfilePictureChange = (e) => {
+  const handleProfilePictureChange = async (e) => {
     const file = e.target.files[0];
     if (file) {
       const formData = new FormData();
-      formData.append('image', file);
-      let t = getCookiesAsJson();
-      console.log(t);
-      let authToken  = t.token;
-      axios.post('http://localhost:8080/user/uploadImage', formData, {
-        headers: {
-          'token': `${authToken}`,
-        },
-      })
-      .then(response => {
-        setImageUrl(response.data.imageUrl);
-      })
-      .catch(error => {
-        console.error('Error uploading image:', error);
-      });
+      formData.append('image', file); // Ensure the key matches the backend's expectation
+      
+      try {
+        const response = await axios.post(
+          'http://localhost:8080/user/uploadImage',
+          formData,
+          {
+            headers: {
+              token: authToken, // Include the token for authentication
+            },
+          }
+        );
+        if (response.data && response.data.imageUrl) {
+          console.log( response.data.imageUrl || "No URL returned");
+          
+          setImageUrl(response.data.imageUrl); // Update state with the returned image URL
+        } else {
+          console.error('Image upload successful, but no URL returned:', response.data);
+        }
+      } catch (error) {
+        console.error('Error uploading image:', error.response?.data || error.message);
+      }
     }
   };
-
   const handleSubmit = (e) => {
     e.preventDefault();
     const userDetails = {
-      profilePicture: imageUrl,
+      profileUrl: imageUrl,
       description,
       currentlyEmployedAt,
       location,
@@ -66,13 +72,14 @@ const UserDetails = () => {
       projects,
     };
 
-    axios.post('http://localhost:8080/user/updateDetails', userDetails, {
+    axios.post('http://localhost:8080/user/details', userDetails, {
       headers: {
-        'Authorization': `Bearer ${authToken}`,
+        'token': `${authToken}`,
       },
     })
     .then(response => {
       console.log('User details updated:', response.data);
+      navigate('/profile');
     })
     .catch(error => {
       console.error('Error updating user details:', error);

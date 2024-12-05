@@ -229,12 +229,12 @@ const __dirname = path.dirname(__filename);
 // Configure Multer storage
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
-        cb(null, path.join(__dirname, 'assets/images')); // Store images in the assets/images folder
+        cb(null, path.join(__dirname, '../asset/images')); // Store images in the asset/images folder
     },
     filename: (req, file, cb) => {
         const username = req.user?.username || 'default_user'; // Use req.user.username or fallback
         const ext = path.extname(file.originalname);
-        cb(null, `${username}${ext}`); // Save file as {username}.{extension}
+        cb(null, `${username}.jpg`); // Save file as {username}.{extension}
     }
 });
 
@@ -259,9 +259,14 @@ const uploadImage = (req, res) => {
     
     upload.single('image')(req, res, (err) => {
         if (err) {
+            console.error('Multer error: ', err);
             return res.status(400).json({ error: err.message });
         }
-        const imageUrl = `http://localhost:8080/assets/images/${req.file.filename}`;
+        if (!req.file) {
+            console.log('No file found in request');
+            return res.status(400).json({ error: 'No file uploaded' });
+        }
+        const imageUrl = `http://localhost:8080/asset/images/${req.file.filename}`;
         res.status(200).json({ 
             message: 'Image uploaded successfully', 
             imageUrl: imageUrl 
