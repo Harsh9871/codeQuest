@@ -12,7 +12,7 @@ const createToken = (payload, expiresIn = jwtConfig.expiresIn) => {
 const getDataFromToken = (token) => {
   try {
     return jwt.verify(token, jwtConfig.secret);
-  } catch (error) {
+  } catch (_) {
     return null;
   }
 }

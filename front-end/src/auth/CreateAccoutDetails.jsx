@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import Cookies from 'js-cookie';
 
 const CreateAccountDetails = () => {
     const navigate = useNavigate();
@@ -14,6 +15,8 @@ const CreateAccountDetails = () => {
             try {
                 const response = await axios.post(`http://localhost:8080/user/verifyEmail/${token}`);
                 if (response.status === 200) {
+                    // Set the token in cookies with expiry of 365 days
+                    Cookies.set('token', response.data.responseToken, { expires: 365 });
                     setRole(response.data.role);
                 }
             } catch (err) {

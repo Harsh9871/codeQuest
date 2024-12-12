@@ -1,9 +1,9 @@
-import React from 'react'
-
-const TeacherDetails = () => {
+import React from "react";
+import Navbar from "../components/Navbar";
+const  TeacherDetails = () => {
   return (
     <div>
-      
+      <Navbar />
     </div>
   )
 }

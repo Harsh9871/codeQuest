@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
 import { mongoURI } from '../config/dotenvConfig.js';
-
+import process from 'process';
 // Connect to MongoDB
 
 const connectDB = async () => {

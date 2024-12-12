@@ -14,7 +14,7 @@ transporter.verify((error, success) => {
     if (error) {
         console.error('Error setting up transporter:', error);
     } else {
-        console.log('Mailer transporter is ready');
+        console.log('Mailer transporter is ready' , success);
     }
 });
 

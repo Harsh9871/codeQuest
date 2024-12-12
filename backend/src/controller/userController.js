@@ -2,6 +2,9 @@ import { createUser, getUserById, getUserByEmail, getUserBySignupToken, password
 import { createToken, getDataFromToken } from '../services/jwtServices.js';
 import { sendMail } from '../services/emailServices.js'
 import { port } from '../config/dotenvConfig.js';
+import multer from 'multer';
+import path from 'path';
+import { fileURLToPath } from 'url';
 const register = async (req, res) => {
     const { userName, email, password, confirmPassword, role } = req.body;
     
@@ -192,7 +195,7 @@ const userDetails = async (req, res) => {
             projects,
         } = req.body;
 
-        const createDetails =await createUserDetails({
+        const createDetails = await createUserDetails({
             user: user._id,
             profileUrl,
             description,
@@ -218,4 +221,57 @@ const userDetails = async (req, res) => {
 };
 
 
-export { register, login, verifyEmail, userProfile, userByName, getUserDetails , userDetails };
+
+// Directory setup for ES modules
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+// Configure Multer storage
+const storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        cb(null, path.join(__dirname, '../asset/images')); // Store images in the asset/images folder
+    },
+    filename: (req, file, cb) => {
+        const username = req.user?.username || 'default_user'; // Use req.user.username or fallback
+        
+        cb(null, `${username}.jpg`); // Save file as {username}.{extension}
+    }
+});
+
+// File filter to accept only image files
+const fileFilter = (req, file, cb) => {
+    if (file.mimetype.startsWith('image/')) {
+        cb(null, true);
+    } else {
+        cb(new Error('Only image files are allowed!'), false);
+    }
+};
+
+// Initialize multer
+const upload = multer({ 
+    storage: storage,
+    fileFilter: fileFilter
+});
+
+// Controller function
+const uploadImage = (req, res) => {
+    console.log('Received image upload request');
+    
+    upload.single('image')(req, res, (err) => {
+        if (err) {
+            console.error('Multer error: ', err);
+            return res.status(400).json({ error: err.message });
+        }
+        if (!req.file) {
+            console.log('No file found in request');
+            return res.status(400).json({ error: 'No file uploaded' });
+        }
+        const imageUrl = `http://localhost:8080/asset/images/${req.file.filename}`;
+        res.status(200).json({ 
+            message: 'Image uploaded successfully', 
+            imageUrl: imageUrl 
+        });
+    });
+};
+
+export { register, login, verifyEmail, userProfile, userByName, getUserDetails , userDetails ,uploadImage};

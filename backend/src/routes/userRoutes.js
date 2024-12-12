@@ -1,21 +1,30 @@
 import express from 'express';
-const userRouter = express.Router();
+import {
+    register,
+    login,
+    verifyEmail,
+    userProfile,
+    userByName,
+    getUserDetails,
+    userDetails,
+    uploadImage,
+} from '../controller/userController.js';
 import { authMiddleware } from '../middleware/authMiddleware.js';
-import { register, login, verifyEmail , userProfile , userByName , getUserDetails  , userDetails} from '../controller/userController.js';
 
+const userRouter = express.Router();
 
-userRouter.post('/login', login);
+// Authentication Routes
+userRouter.post('/register', register); // User Registration
+userRouter.post('/login', login); // User Login
+userRouter.post('/verifyEmail/:token', verifyEmail); // Verify Email
 
-userRouter.get('/details',authMiddleware, getUserDetails);
+// User Details and Profile
+userRouter.get('/details', authMiddleware, getUserDetails); // Get User Details
+userRouter.get('/:userName', userByName); // Get User by Username
+userRouter.post('/details', authMiddleware, userDetails); // Add/Edit User Details
+userRouter.post('/profile', userProfile); // User Profile
 
-userRouter.post('/details',authMiddleware, userDetails);
-
-userRouter.post('/profile',userProfile);
-
-userRouter.get('/:userName',userByName);
-
-userRouter.post('/verifyEmail/:token', verifyEmail);
-
-userRouter.post('/register', register);
+// Upload Routes
+userRouter.post('/uploadImage', authMiddleware, uploadImage); // Upload Image
 
 export { userRouter };
