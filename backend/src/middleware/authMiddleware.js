@@ -20,7 +20,7 @@ const authMiddleware = async (req, res, next) => {
     // Proceed to the next middleware or route handler
     next();
   } catch (error) {
-    return res.status(401).json({ error: 'Unauthorized: Invalid token' });
+    return res.status(401).json({ error: 'Unauthorized: Invalid token' , errorMsg: error.message});
   }
 };
 

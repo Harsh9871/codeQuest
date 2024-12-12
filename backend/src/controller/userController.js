@@ -195,7 +195,7 @@ const userDetails = async (req, res) => {
             projects,
         } = req.body;
 
-        const createDetails =await createUserDetails({
+        const createDetails = await createUserDetails({
             user: user._id,
             profileUrl,
             description,
@@ -233,7 +233,7 @@ const storage = multer.diskStorage({
     },
     filename: (req, file, cb) => {
         const username = req.user?.username || 'default_user'; // Use req.user.username or fallback
-        const ext = path.extname(file.originalname);
+        
         cb(null, `${username}.jpg`); // Save file as {username}.{extension}
     }
 });

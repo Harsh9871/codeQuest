@@ -1,5 +1,5 @@
 import 'dotenv/config'; 
-
+import process from 'process';
 const emailUser = process.env.EMAIL;
 const emailPass = process.env.EMAIL_PASSWORD;
 const port = process.env.PORT || 8081;

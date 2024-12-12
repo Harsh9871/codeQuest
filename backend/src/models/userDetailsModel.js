@@ -62,7 +62,7 @@ const userDetailSchema = new mongoose.Schema({
     }
     
 
-});
+}, { timestamps: true });
 
 const UserDetail = mongoose.model('UserDetail', userDetailSchema);    
 export default UserDetail;
